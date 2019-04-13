@@ -4,17 +4,19 @@
 <title>RU Calculator</title>
 </head>
 <body>
-
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Bellevue_College_logo.svg/1280px-Bellevue_College_logo.svg.png"width="800" ><br>
 <h1>Thinking about switching to Azure?</h1>
 <h1>Use our Calculator to estimate the cost</h1>
-<img src="elements/bcLogo.png" alt="Bellevue College">
-<!-- <form onsubmit="jsonCheck()" -->
-<form>
-  <input type="file" id = "fileInput" accept="application/json">
 
+<!-- <form onsubmit="jsonCheck()" -->
+<p2>Please upload .JSON file</p2>
+<form onsubmit="findSize()">
+  <input type="file" id = "fUpload" accept="application/json">
 
   <br>
-  Create:<br>
+  Number of Documents:
+  <input type="text" name="doc" value="#"><br>
+  Create:
   <input type="text" name="create" value="#"><br>
   Read:<br>
   <input type="text" name="read" value="#"><br>
@@ -25,6 +27,20 @@
   <br>
   <input type="submit" value="Submit">
 </form>
+
+<script>
+function findSize() {
+    var fileInput =  document.getElementById("fUpload");
+    try{
+        alert("Your rough estimation is: " + (fileInput.files[0].size / 1024 )+ " RU"); // Size returned in bytes.
+    }catch(e){
+        var objFSO = new ActiveXObject("Scripting.FileSystemObject");
+        var e = objFSO.getFile( fileInput.value);
+        var fileSize = e.size;
+        alert(fileSize);
+    }
+}
+</script>
 
 </body>
 </html>
