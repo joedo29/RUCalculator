@@ -10,7 +10,7 @@
 
 <!-- <form onsubmit="jsonCheck()" -->
 <p2>Please upload .JSON file</p2>
-<form onsubmit="findSize()">
+<form onsubmit="checkJSON()">
   <input type="file" id = "fUpload" accept="application/json">
 
   <br>
@@ -29,17 +29,45 @@
 </form>
 
 <script>
-function findSize() {
-    var fileInput =  document.getElementById("fUpload");
-    try{
-        alert("Your rough estimation is: " + (fileInput.files[0].size / 1024 )+ " RU"); // Size returned in bytes.
-    }catch(e){
-        var objFSO = new ActiveXObject("Scripting.FileSystemObject");
-        var e = objFSO.getFile( fileInput.value);
-        var fileSize = e.size;
-        alert(fileSize);
+
+    //Kevin's method
+    function checkJSON() {
+        var fileInput =  document.getElementById("fUpload");
+        var json = new FileReader();
+        json.onload = function(event) {
+            var contents = event.target.result;
+
+            //If valid JSON format
+            if(JSON.parse(event.target.result)){
+                //Go to Joe's method
+                findSize();
+            }else{
+                //output error
+                alert("JSON file is not written in valid JSON format. ");
+            }
+        }
+        json.onerror = function(errors) {
+            //display error(s)
+            alert("Error: " + errors)
+        }
+        json.readAsText(fileInput.files[0]);
     }
-}
+
+
+    //Joe's method
+    function findSize() {
+        var fileInput =  document.getElementById("fUpload");
+        try{
+            alert("Your rough estimation is: " + (fileInput.files[0].size / 1024 )+ " RU"); // Size returned in bytes.
+        }catch(e){
+            var objFSO = new ActiveXObject("Scripting.FileSystemObject");
+            var e = objFSO.getFile( fileInput.value);
+            var fileSize = e.size;
+            alert(fileSize);
+        }
+    }
+
+    
 </script>
 
 </body>
