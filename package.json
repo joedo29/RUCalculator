@@ -1,0 +1,24 @@
+{
+  "name": "RUCalculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joedo29/RUCalculator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joedo29/RUCalculator/issues"
+  },
+  "homepage": "https://github.com/joedo29/RUCalculator#readme",
+  "dependencies": {
+    "@azure/cosmos": "^2.1.5",
+    "uuid": "^3.3.2"
+  }
+}
