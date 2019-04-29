@@ -1,4 +1,6 @@
-// ADD THIS PART TO YOUR CODE
+/**
+ * All code here was provided by Microsoft's Azure CosmosDB NodeJS tutorial. 
+ */
 var config = {}
 
 config.endpoint = "https://70392124-0ee0-4-231-b9ee.documents.azure.com:443/";
