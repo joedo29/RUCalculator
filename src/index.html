@@ -23,11 +23,30 @@
 
 <div id="mainDiv"></div>
 
-<button id="addButton" type="button">Add Form</button>
+<button id="addButton" type="button">Add Document</button>
+<br>
+<button onclick="CalculateFunction()">Calculate</button>
 
-    <br> <input id = "calculate" type="submit" value="Calculate">
+<p id= 0 ></p>
+
+
+
+  <!--<br> <input id = "calculate" type="submit" value="Calculate">-->
 
 <script>
+
+var RU = 64;
+var fileSize = 45;
+
+function CalculateFunction() {
+
+
+
+// document.write("test");
+
+document.getElementById(0).innerHTML = "Total Storage "+fileSize +" "+"Total RU "+  RU;
+
+}
 
 var addFormButton = document.getElementById("addButton");
 var calculateButton = document.getElementById("calculate");
@@ -35,7 +54,7 @@ var maindDiv = document.querySelector("#mainDiv");
 var resultsDiv = document.getElementById("results");
 
 addFormButton.addEventListener("click", addAForm, false );
-calculate.addEventListener("click", CalculateMethod , false);
+calculateButton.addEventListener("click", CalculateMethod , false);
 
 
 var idCounter = 0;
@@ -82,7 +101,7 @@ function addAForm(){
         "name=\"#\" placeholder=\"#\"> <br> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUploadUpdate" + idCounter + "\" accept=\"application/json\"> <br><br> Delete: <input class =\"Delete\" id =\"Delete"+idCounter+"\"  type=\"text\" "+
         "name=\"#\" placeholder=\"#\"> <br><br>" +
         "<button id=\"deleteButton" + idCounter + "\" type=\"button\" "+
-        "onClick=\"removeForm(this.id)\">Delete Section" +
+        "onClick=\"removeForm(this.id)\">Delete Document" +
         "</button><br> <br><hr></form>";
 
     parentElement.innerHTML = formHTMLLayout;
