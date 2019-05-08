@@ -19,6 +19,7 @@
   "homepage": "https://github.com/joedo29/RUCalculator#readme",
   "dependencies": {
     "@azure/cosmos": "^2.1.5",
+    "express": "^4.16.4",
     "uuid": "^3.3.2"
   }
 }

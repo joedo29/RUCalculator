@@ -13,7 +13,6 @@
   </style>
 
 <title>RU Calculator</title>
-<script src="app.js"></script>
 
 </head>
 <body>
@@ -43,38 +42,95 @@ var idCounter = 0;
 var parentElement = "";
 var childElement = "";
 
-function CalculateMethod(){
-      for(i = 1; i<=idCounter;i++){
-        var FormField = parseInt(document.getElementById("update"+i),10);
-        var fileInput =  document.getElementById("fUpload" + idCounter);
-        if(FormField==0){
-          var sourceJSON = checkJSON(fileInput);
-          if(sourceJSON !== null){
-              var arr = calculateAsync(sourceJSON, null);
-              resultsDiv.innerHTML = "Create: " + arr.create + "Read: " + arr.read + "Update: " + arr.update + "Delete: " + arr.delete;
-          }else{
-            resultsDiv.innerHTML = "error1";
-          }
 
-        }else{
-          var fileInput2 =  document.getElementById("fUploadUpdate" + idCounter);
-          var sourceJSON = checkJSON(fileInput);
-          var updateJSON = checkJSON(fileInput2);
-          if(updateJSON !== null && sourceJSON !== null){
-            var arr = calculateAsync(sourceJSON, updateJSON);
-            resultsDiv.innerHTML = "Create: " + arr.create + "Read: " + arr.read + "Update: " + arr.update + "Delete: " + arr.delete;
-          }else{
-            resultsDiv.innerHTML = "error2";
-          }
+
+
+function calculate2(sourceJSON, updateJSON)
+{
+return new Promise((resolve, reject) => {
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+	var theUrl = "http://localhost:8080/";
+	var theUrl2 = "https://vast-caverns-24352.herokuapp.com/";
+	xmlhttp.responseType = '';
+	xmlhttp.open("POST", theUrl2, true);
+	xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	
+	xmlhttp.onload = function(){
+		//output is a string of a json
+		resolve(xmlhttp.responseText);
+	};
+	
+	//Tests with either send
+	//xmlhttp.send(JSON.stringify({"source": { "name": "Tester" } }));
+	xmlhttp.send(JSON.stringify({"source": sourceJSON , "update": updateJSON }));
+});
+};
+async function CalculateMethod(){
+
+ //Kevin's method
+ function checkJSON(fileInput) {
+	 return new Promise((resolve, reject) => {
+	var json = new FileReader();
+        json.onload = function(event) {
+            var contents = event.target.result;
+            //If valid JSON format
+            if(contents != null){
+                //Go to Joe's method
+                //findSize();
+                resolve(contents);
+            }else{
+                //output error
+                alert("JSON file is not written in valid JSON format. ");
+		reject('error');
+            }
         }
-      }
+        json.onerror = function(errors) {
+            //display error(s)
+            alert("Error: " + errors);
+        }
+	 json.readAsText(fileInput.files[0]);
+	 });
+}
+	var i;
+	for(i = 1; i<=idCounter;i++){
+		var fileInput2 = document.getElementById("fUploadUpdate" + i);
+		var fileInput = document.getElementById("fUpload" + i);
+		if(fileInput.files.length == 1){
+			var sourceJSON = await checkJSON(fileInput);
+			if(sourceJSON != null){
+				if(fileInput2.files.length != 1){
+					var arr = await calculate2(sourceJSON, null);
+					arr = JSON.parse(arr);
+					//TODO: change information destinatino later
+					alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+				}else if(fileInput2.files.length == 1){
+					var updateJSON = await checkJSON(fileInput2);
+					if(updateJSON != null){
+						var arr = await calculate2(sourceJSON, updateJSON);
+						arr = JSON.parse(arr);
+
+						//TODO: same thing as other TODO
+						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+					}else{
+						alert("error3");
+					}
+				}else{
+					alert("error2");
+				}
+ 			}else{
+		        	alert("error1");
+          		}
+      		}else{
+			alert("error0");
+		}
+	}
 }
 
 //div starts at 0 but the form elements starts at 1
 function addAForm(){
     parentElement = document.createElement("div");
     parentElement.setAttribute("id", idCounter++);
-    var formHTMLLayout = " <form onsubmit=\"checkJSON()\"> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUpload" + idCounter +"\" accept=\"application/json\">"+
+    var formHTMLLayout = " <form onsubmit=\"calculate2()\"> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUpload" + idCounter +"\" accept=\"application/json\">"+
         "<br> Number of Documents:<input type=\"text\" name=\"firstname\" "+
         "placeholder=\"# of documents\"> <br> <br> Create: <input class =\"Create\" id =\"Create"+idCounter+"\" type=\"text\" "+
         "name=\"#\" placeholder=\"#\"> <br><br> Read: <input class =\"Read\" id =\"Read"+idCounter+"\" type=\"text\" "+
@@ -99,29 +155,6 @@ function removeForm(elementId){
       var documentId = 0;
       documentId++;
     }
-    //Kevin's method
-    function checkJSON(fileInput) {
-        var json = new FileReader();
-        json.onload = function(event) {
-            var contents = JSON.parse(event.target.result);
-
-            //If valid JSON format
-            if(contents !== null){
-                //Go to Joe's method
-                //findSize();
-                return contents;
-            }else{
-                //output error
-                alert("JSON file is not written in valid JSON format. ");
-            }
-        }
-        json.onerror = function(errors) {
-            //display error(s)
-            alert("Error: " + errors)
-        }
-        json.readAsText(fileInput.files[0]);
-    }
-
 
     //Joe's method
     function findSize() {
