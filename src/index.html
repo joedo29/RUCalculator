@@ -1,58 +1,214 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+  #calculate{
+    width:100px;
+    height:50px;
+    color: white;
+    background-color:#20639b;
+    margin-top:20px;
+    margin-bottom:20px;
+  }
+  </style>
+
 <title>RU Calculator</title>
+
 </head>
 <body>
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Bellevue_College_logo.svg/1280px-Bellevue_College_logo.svg.png"width="800" ><br>
 <h1>Thinking about switching to Azure?</h1>
 <h1>Use our Calculator to estimate the cost</h1>
 
-<!-- <form onsubmit="jsonCheck()" -->
-<p2>Please upload .JSON file</p2>
-<form onsubmit="checkJSON()">
-  <input type="file" id = "fUpload" accept="application/json">
+<div id="mainDiv"></div>
 
-  <br>
-  Number of Documents:
-  <input type="text" name="doc" value="#"><br>
-  Create:
-  <input type="text" name="create" value="#"><br>
-  Read:<br>
-  <input type="text" name="read" value="#"><br>
-  Update:<br>
-  <input type="text" name="update" value="#"><br>
-  Delete:<br>
-  <input type="text" name="delete" value="#"><br>
-  <br>
-  <input type="submit" value="Submit">
-</form>
+<button id="addButton" type="button">Add Form</button>
+
+<!-- Display the calculation -->
+<div id="create"></div>
+<div id="read"></div>
+<div id="update"></div>
+<div id="delete"></div>
+<div id="total"></div>
+
+    <br> <input id = "calculate" type="submit" value="Calculate">
 
 <script>
 
-    //Kevin's method
-    function checkJSON() {
-        var fileInput =  document.getElementById("fUpload");
-        var json = new FileReader();
-        json.onload = function(event) {
-            var contents = event.target.result;
+var addFormButton = document.getElementById("addButton");
+var calculateButton = document.getElementById("calculate");
+var maindDiv = document.querySelector("#mainDiv");
+var resultsDiv = document.getElementById("results");
 
-            //If valid JSON format
-            if(JSON.parse(event.target.result)){
-                //Go to Joe's method
-                findSize();
-            }else{
-                //output error
-                alert("JSON file is not written in valid JSON format. ");
+var getTotal = 0;
+
+
+addFormButton.addEventListener("click", addAForm, false );
+calculate.addEventListener("click", CalculateMethod , false);
+
+
+var idCounter = 0;
+
+var parentElement = "";
+var childElement = "";
+
+
+
+
+function calculate2(sourceJSON, updateJSON)
+{
+return new Promise((resolve, reject) => {
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+	var theUrl = "http://localhost:8080/";
+	var theUrl2 = "https://vast-caverns-24352.herokuapp.com/";
+	xmlhttp.responseType = '';
+	xmlhttp.open("POST", theUrl2, true);
+	xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+	xmlhttp.onload = function(){
+		//output is a string of a json
+		resolve(xmlhttp.responseText);
+	};
+
+	//Tests with either send
+	//xmlhttp.send(JSON.stringify({"source": { "name": "Tester" } }));
+	xmlhttp.send(JSON.stringify({"source": sourceJSON , "update": updateJSON }));
+});
+};
+async function CalculateMethod(){
+
+    function validDocumentField(value){
+        value = Number(value);
+        return Number.isInteger(value) && value > 0;
+
+    };
+
+    function validField(value){
+        value = Number(value);
+        return Number.isInteger(value) && value > -1;
+
+    };
+
+    function checkFields(){
+        var documents = document.getElementsByClassName("documentNumber");
+        var creates = document.getElementsByClassName("Create");
+        var reads = document.getElementsByClassName("Read");
+        var updates = document.getElementsByClassName("Update");
+        var deletes = document.getElementsByClassName("Delete");
+
+        var i;
+    	for(i = 0; i<idCounter;i++){
+            if(!validDocumentField(documents.item(i).value) || !validField(creates.item(i).value) || !validField(reads.item(i).value) || !validField(updates.item(i).value) || !validField(deletes.item(i).value)){
+                return false;
             }
         }
-        json.onerror = function(errors) {
-            //display error(s)
-            alert("Error: " + errors)
-        }
-        json.readAsText(fileInput.files[0]);
-    }
 
+        return true;
+    };
+
+
+
+    if(checkFields()){
+
+    //Kevin's method
+    function checkJSON(fileInput) {
+
+        return new Promise((resolve, reject) => {
+        var json = new FileReader();
+            json.onload = function(event) {
+                var contents = event.target.result;
+                //If valid JSON format
+                if(contents != null){
+                    //Go to Joe's method
+                    //findSize();
+                    resolve(contents);
+                }else{
+                    //output error
+                    alert("JSON file is not written in valid JSON format. ");
+            reject('error');
+                }
+            }
+            json.onerror = function(errors) {
+                //display error(s)
+                alert("Error: " + errors);
+            }
+        json.readAsText(fileInput.files[0]);
+        });
+    }
+	var i;
+	for(i = 1; i<=idCounter;i++){
+		var fileInput2 = document.getElementById("fUploadUpdate" + i);
+		var fileInput = document.getElementById("fUpload" + i);
+		if(fileInput.files.length == 1){
+			var sourceJSON = await checkJSON(fileInput);
+			if(sourceJSON != null){
+				if(fileInput2.files.length != 1){
+					var arr = await calculate2(sourceJSON, null);
+					arr = JSON.parse(arr);
+					//TODO: change information destinatino later
+					alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+				}else if(fileInput2.files.length == 1){
+					var updateJSON = await checkJSON(fileInput2);
+					if(updateJSON != null){
+						var arr = await calculate2(sourceJSON, updateJSON);
+						// alert(arr);
+                        arr = JSON.parse(arr);
+
+						//TODO: same thing as other TODO
+            getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
+						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+            document.getElementById('create').innerHTML = "Create: " + arr.create + " RU";
+            document.getElementById('read').innerHTML = "Read: " + arr.read + " RU";
+            document.getElementById('update').innerHTML = "Update: " + arr.update + " RU";
+            document.getElementById('delete').innerHTML = "Delete: " + arr.delete + " RU";
+            document.getElementById('total').innerHTML = "Total RU: " + getTotal + " RU";
+
+
+					}else{
+						alert("error3");
+					}
+				}else{
+					alert("error2");
+				}
+ 			}else{
+		        	alert("error1");
+          		}
+      		}else{
+			alert("error0");
+		}
+	}
+    }else{
+        alert("Not valid. ");
+    }
+}
+
+//div starts at 0 but the form elements starts at 1
+function addAForm(){
+    parentElement = document.createElement("div");
+    parentElement.setAttribute("id", ++idCounter);
+    var formHTMLLayout = " <form onsubmit=\"calculate2()\"> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUpload" + idCounter +"\" accept=\"application/json\">"+
+        "<br> Number of Documents:<input class=\"documentNumber\" id=\"documentNumber" + idCounter + "\" type=\"number\" name=\"documentNumber\" value=\"0\" min=\"0\" step=\"1\" "+
+        "placeholder=\"# of documents\"> <br> <br> Create: <input class =\"Create\" id =\"Create"+idCounter+"\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
+        "name=\"#\" placeholder=\"#\"> <br><br> Read: <input class =\"Read\" id =\"Read"+idCounter+"\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
+        "name=\"#\" placeholder=\"#\"> <br><br> Update: <input class =\"Update\" id =\"Update"+idCounter+"\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
+        "name=\"#\" placeholder=\"#\"> <br> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUploadUpdate" + idCounter + "\" accept=\"application/json\"> <br><br> Delete: <input class =\"Delete\" id =\"Delete"+idCounter+"\"  type=\"number\" value=\"0\" min=\"0\" step=\"1\" "+
+        "name=\"#\" placeholder=\"#\"> <br><br>" +
+        "<button id=\"deleteButton" + idCounter + "\" type=\"button\""+
+        "onClick=\"removeForm(this.id)\">Delete Section" +
+        "</button><br> <br><hr></form>";
+
+    parentElement.innerHTML = formHTMLLayout;
+    maindDiv.appendChild(parentElement);
+
+}
+
+
+
+function removeForm(elementId){
+   childElement = document.getElementById(elementId);
+   childElement.parentNode.parentNode.remove();
+   idCounter--;
+}
 
     //Joe's method
     function findSize() {
@@ -67,8 +223,9 @@
         }
     }
 
-    
 </script>
+<div id="results">
 
+</div>
 </body>
 </html>
