@@ -24,6 +24,13 @@
 
 <button id="addButton" type="button">Add Form</button>
 
+<!-- Display the calculation -->
+<div id="create"></div>
+<div id="read"></div>
+<div id="update"></div>
+<div id="delete"></div>
+<div id="total"></div>
+
     <br> <input id = "calculate" type="submit" value="Calculate">
 
 <script>
@@ -32,6 +39,9 @@ var addFormButton = document.getElementById("addButton");
 var calculateButton = document.getElementById("calculate");
 var maindDiv = document.querySelector("#mainDiv");
 var resultsDiv = document.getElementById("results");
+
+var getTotal = 0;
+
 
 addFormButton.addEventListener("click", addAForm, false );
 calculate.addEventListener("click", CalculateMethod , false);
@@ -48,35 +58,35 @@ var childElement = "";
 function calculate2(sourceJSON, updateJSON)
 {
 return new Promise((resolve, reject) => {
-	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
 	var theUrl = "http://localhost:8080/";
 	var theUrl2 = "https://vast-caverns-24352.herokuapp.com/";
 	xmlhttp.responseType = '';
 	xmlhttp.open("POST", theUrl2, true);
 	xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-	
+
 	xmlhttp.onload = function(){
 		//output is a string of a json
 		resolve(xmlhttp.responseText);
 	};
-	
+
 	//Tests with either send
 	//xmlhttp.send(JSON.stringify({"source": { "name": "Tester" } }));
 	xmlhttp.send(JSON.stringify({"source": sourceJSON , "update": updateJSON }));
 });
 };
 async function CalculateMethod(){
-    
+
     function validDocumentField(value){
         value = Number(value);
         return Number.isInteger(value) && value > 0;
-        
+
     };
 
     function validField(value){
         value = Number(value);
         return Number.isInteger(value) && value > -1;
-        
+
     };
 
     function checkFields(){
@@ -85,22 +95,24 @@ async function CalculateMethod(){
         var reads = document.getElementsByClassName("Read");
         var updates = document.getElementsByClassName("Update");
         var deletes = document.getElementsByClassName("Delete");
-        
+
         var i;
     	for(i = 0; i<idCounter;i++){
             if(!validDocumentField(documents.item(i).value) || !validField(creates.item(i).value) || !validField(reads.item(i).value) || !validField(updates.item(i).value) || !validField(deletes.item(i).value)){
                 return false;
             }
         }
-        
+
         return true;
     };
+
+
 
     if(checkFields()){
 
     //Kevin's method
     function checkJSON(fileInput) {
-        
+
         return new Promise((resolve, reject) => {
         var json = new FileReader();
             json.onload = function(event) {
@@ -139,11 +151,19 @@ async function CalculateMethod(){
 					var updateJSON = await checkJSON(fileInput2);
 					if(updateJSON != null){
 						var arr = await calculate2(sourceJSON, updateJSON);
-						alert(arr);
+						// alert(arr);
                         arr = JSON.parse(arr);
-                        
+
 						//TODO: same thing as other TODO
+            getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
 						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+            document.getElementById('create').innerHTML = "Create: " + arr.create + " RU";
+            document.getElementById('read').innerHTML = "Read: " + arr.read + " RU";
+            document.getElementById('update').innerHTML = "Update: " + arr.update + " RU";
+            document.getElementById('delete').innerHTML = "Delete: " + arr.delete + " RU";
+            document.getElementById('total').innerHTML = "Total RU: " + getTotal + " RU";
+
+
 					}else{
 						alert("error3");
 					}
@@ -181,6 +201,8 @@ function addAForm(){
     maindDiv.appendChild(parentElement);
 
 }
+
+
 
 function removeForm(elementId){
    childElement = document.getElementById(elementId);
