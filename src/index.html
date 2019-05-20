@@ -239,11 +239,9 @@ async function CalculateMethod(){
     }
 }
 
-//div starts at 0 but the form elements starts at 1
 function addAForm(){
     parentElement = document.createElement("div");
     parentElement.setAttribute("id", ++idCounter);
-
     parentElement.innerHTML = document.getElementById('blockOfStuff').innerHTML;
     maindDiv.appendChild(parentElement);
 
