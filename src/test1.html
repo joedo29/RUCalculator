@@ -7,6 +7,15 @@
 <body>
   <div id="mainDiv">
   </div>
+  <!-- <form>
+    <input type = "text" name = "firstname" placeholder= "First Field">
+    <br> <br>
+    <input type="text" name="lastname" placeholder = "Second Field">
+    <br><br>
+    <button id="deleteButton" type="button" onClick= "removeForm(10)"> remove </button>
+    <br>
+    <hr>
+  </form> -->
 
   <button id="addButton" type="button">Add Form</button>
 
@@ -26,6 +35,17 @@
 
 
 
+<script id="blockOfStuff" type="text/html">
+  <form>
+    <input type = "text" name = "firstname" placeholder= "First Field">
+    <br> <br>
+    <input type="text" name="lastname" placeholder = "Second Field">
+    <br><br>
+    <button id="deleteButton" type="button" onClick= "removeForm(this.id)"> remove </button>
+    <br>
+    <hr>
+  </form>
+</script>
 
 <script>
 
@@ -44,14 +64,14 @@
   function addAForm(){
       parentElement = document.createElement("div");
       parentElement.setAttribute("id", idCounter++);
-      var formHTMLLayout = "<form> <input type=\"text\" name=\"firstname\" "+
-          "placeholder=\"First Name\"> <br> <br> <input type=\"text\" "+
-          "name=\"lastname\" placeholder=\"Last Name\"> <br><br>" +
-          "<button id=\"deleteButton" + idCounter + "\" type=\"button\" "+
-          "onClick=\"removeForm(this.id)\">Delete Form" +
-          "</button>  <br><hr></form>";
-
-      parentElement.innerHTML = formHTMLLayout;
+      // var formHTMLLayout = "<form> <input type=\"text\" name=\"firstname\" "+
+      //     "placeholder=\"First Name\"> <br> <br> <input type=\"text\" "+
+      //     "name=\"lastname\" placeholder=\"Last Name\"> <br><br>" +
+      //     "<button id=\"deleteButton" + idCounter + "\" type=\"button\" "+
+      //     "onClick=\"removeForm(this.id)\">Delete Form" +
+      //     "</button>  <br><hr></form>";
+      parentElement.innerHTML = document.getElementById('blockOfStuff').innerHTML;
+      // parentElement.innerHTML = formHTMLLayout;
       maindDiv.appendChild(parentElement);
 
   }
