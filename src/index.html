@@ -30,6 +30,7 @@
 <div id="update"></div>
 <div id="delete"></div>
 <div id="total"></div>
+<div id="size"></div>
 
     <br> <input id = "calculate" type="submit" value="Calculate">
 
@@ -61,7 +62,7 @@ var calculateButton = document.getElementById("calculate");
 var maindDiv = document.querySelector("#mainDiv");
 var resultsDiv = document.getElementById("results");
 
-var getTotal = 0;
+//var getTotal = 0;
 
 
 addFormButton.addEventListener("click", addAForm, false );
@@ -74,7 +75,41 @@ var parentElement = "";
 var childElement = "";
 
 
+function getCreate(basePrice, form){
+  var createField =  form.elements["Create"];
 
+  return parseInt(createField.value) * basePrice;
+}
+
+function getRead(basePrice, form){
+  var readField =  form.elements["Read"];
+
+  return parseInt(readField.value) * basePrice;
+}
+
+function getUpdate(basePrice, form){
+  var updateField =  form.elements["Update"];
+
+  return parseInt(updateField.value) * basePrice;
+}
+
+function getDelete(basePrice, form){
+  var deleteField =  form.elements["Delete"];
+
+  return parseInt(deleteField.value) * basePrice;
+}
+
+function getTotal(arr, form){
+  return getCreate(arr.create, form) + getRead(arr.read, form) + getUpdate(arr.update, form) + getDelete(arr.delete, form);
+
+  // document.getElementById('showme').innerHTML = "The total RU is: " + total;
+}
+
+function getSize(size, form){
+  var numberField =  form.elements["documentNumber"];
+
+  return parseInt(numberField.value * size);
+}
 
 function calculate2(sourceJSON, updateJSON)
 {
@@ -163,6 +198,12 @@ async function CalculateMethod(){
 					arr = JSON.parse(arr);
 					//TODO: change information destinatino later
 					alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+          document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
+          document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
+          document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
+          document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
+          document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
+          document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
 				}else if(fileInput2.files.length == 1){
 					var updateJSON = await checkJSON(fileInput2);
 					if(updateJSON != null){
@@ -171,14 +212,14 @@ async function CalculateMethod(){
                         arr = JSON.parse(arr);
 
 						//TODO: same thing as other TODO
-            getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
-						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
-            document.getElementById('create').innerHTML = "Create: " + arr.create + " RU";
-            document.getElementById('read').innerHTML = "Read: " + arr.read + " RU";
-            document.getElementById('update').innerHTML = "Update: " + arr.update + " RU";
-            document.getElementById('delete').innerHTML = "Delete: " + arr.delete + " RU";
-            document.getElementById('total').innerHTML = "Total RU: " + getTotal + " RU";
-
+            //getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
+						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete + " Size: " + arr.size);
+            document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
+            document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
+            document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
+            document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
+            document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
+            document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
 
 					}else{
 						alert("error3");
