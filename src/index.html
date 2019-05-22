@@ -30,8 +30,30 @@
 <div id="update"></div>
 <div id="delete"></div>
 <div id="total"></div>
+<div id="size"></div>
 
     <br> <input id = "calculate" type="submit" value="Calculate">
+
+<script id="blockOfStuff" type="text/html">
+<form onsubmit="calculate2()">
+  <p2>Please upload .JSON file</p2>
+  <input type="file" name = "fUpload" accept="application/json">
+    <br> Number of Documents:<input class="documentNumber" type="number" name="documentNumber" value="0" min="0" step="1" placeholder="# of documents">
+    <br> <br>
+    Create: <input class ="Create" name ="Create" type="number" value="0" min="0" step="1" placeholder="#">
+    <br><br>
+    Read: <input class ="Read" name ="Read" type="number" value="0" min="0" step="1" placeholder="#">
+    <br><br>
+    Update: <input class ="Update" name ="Update" type="number" value="0" min="0" step="1" placeholder="#">
+    <br> <p2>Please upload .JSON file</p2>
+    <input type="file" name = "fUploadUpdate" accept="application/json">
+    <br><br>
+    Delete: <input class = "Delete" name ="Delete" type="number" value="0" min="0" step="1" placeholder="#">
+    <br><br>
+    <button id="deleteButton" type="button" onClick="removeForm(this.id)">Delete Section</button>
+    <br> <br><hr>
+  </form>
+</script>
 
 <script>
 
@@ -40,20 +62,48 @@ var calculateButton = document.getElementById("calculate");
 var maindDiv = document.querySelector("#mainDiv");
 var resultsDiv = document.getElementById("results");
 
-var getTotal = 0;
-
+//var getTotal = 0;
 
 addFormButton.addEventListener("click", addAForm, false );
 calculate.addEventListener("click", CalculateMethod , false);
 
 
 var idCounter = 0;
-
 var parentElement = "";
 var childElement = "";
 
 
+function getCreate(basePrice, form){
+  var createField =  form.elements["Create"];
+  return parseInt(createField.value) * basePrice;
+}
 
+function getRead(basePrice, form){
+  var readField =  form.elements["Read"];
+  return parseInt(readField.value) * basePrice;
+}
+
+function getUpdate(basePrice, form){
+  var updateField =  form.elements["Update"];
+  return parseInt(updateField.value) * basePrice;
+}
+
+function getDelete(basePrice, form){
+  var deleteField =  form.elements["Delete"];
+  return parseInt(deleteField.value) * basePrice;
+}
+
+function getTotal(arr, form){
+  return getCreate(arr.create, form) + getRead(arr.read, form) + getUpdate(arr.update, form) + getDelete(arr.delete, form);
+
+  // document.getElementById('showme').innerHTML = "The total RU is: " + total;
+}
+
+function getSize(size, form){
+  var numberField =  form.elements["documentNumber"];
+
+  return parseInt(numberField.value * size);
+}
 
 function calculate2(sourceJSON, updateJSON)
 {
@@ -90,19 +140,15 @@ async function CalculateMethod(){
     };
 
     function checkFields(){
-
-        var forms = document.getElementsByTagName('form');
-
-
-    	for(count = 0; count < forms.length; count++){
+      var forms = document.getElementsByTagName('form');
+      for(count = 0; count < forms.length; count++){
         var i = forms[count];
-            if(!validDocumentField(i.elements["Documents"].value) || !validField(i.elements["Create"].value) || !validField(i.elements["Delete"].value) || !validField(i.elements["Update"].value) || !validField(i.elements["Read"].value)){
-                return false;
-            }
+        if(!validDocumentField(i.elements["documentNumber"].value) || !validField(i.elements["Create"].value) || !validField(i.elements["Delete"].value) || !validField(i.elements["Update"].value) || !validField(i.elements["Read"].value)){
+            return false;
         }
-
-        return true;
-    };
+      }
+      return true;
+  };
 
 
 
@@ -133,10 +179,11 @@ async function CalculateMethod(){
         json.readAsText(fileInput.files[0]);
         });
     }
-	var i;
-	for(i = 1; i<=idCounter;i++){
-		var fileInput2 = document.getElementById("fUploadUpdate" + i);
-		var fileInput = document.getElementById("fUpload" + i);
+
+	var forms = document.getElementsByTagName('form');
+  for(count = 0; count < forms.length; count++){
+		var fileInput2 = forms[count].elements["fUploadUpdate"];
+		var fileInput = forms[count].elements["fUpload"];
 		if(fileInput.files.length == 1){
 			var sourceJSON = await checkJSON(fileInput);
 			if(sourceJSON != null){
@@ -145,6 +192,12 @@ async function CalculateMethod(){
 					arr = JSON.parse(arr);
 					//TODO: change information destinatino later
 					alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
+          document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
+          document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
+          document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
+          document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
+          document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
+          document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
 				}else if(fileInput2.files.length == 1){
 					var updateJSON = await checkJSON(fileInput2);
 					if(updateJSON != null){
@@ -153,14 +206,14 @@ async function CalculateMethod(){
                         arr = JSON.parse(arr);
 
 						//TODO: same thing as other TODO
-            getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
-						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
-            document.getElementById('create').innerHTML = "Create: " + arr.create + " RU";
-            document.getElementById('read').innerHTML = "Read: " + arr.read + " RU";
-            document.getElementById('update').innerHTML = "Update: " + arr.update + " RU";
-            document.getElementById('delete').innerHTML = "Delete: " + arr.delete + " RU";
-            document.getElementById('total').innerHTML = "Total RU: " + getTotal + " RU";
-
+            //getTotal = parseInt(arr.create) + parseInt(arr.read) + parseInt(arr.update) + parseInt(arr.delete);
+						alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete + " Size: " + arr.size);
+            document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
+            document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
+            document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
+            document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
+            document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
+            document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
 
 					}else{
 						alert("error3");
@@ -180,22 +233,10 @@ async function CalculateMethod(){
     }
 }
 
-//div starts at 0 but the form elements starts at 1
 function addAForm(){
     parentElement = document.createElement("div");
     parentElement.setAttribute("id", ++idCounter);
-    var formHTMLLayout = " <form onsubmit=\"calculate2()\"> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUpload" + idCounter +"\" accept=\"application/json\">"+
-        "<br> Number of Documents:<input class=\"documentNumber\" name=\"Documents\" type=\"number\" value=\"0\" min=\"0\" step=\"1\" "+
-        "placeholder=\"# of documents\"> <br> <br> Create: <input class =\"Create\" name =\"Create\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
-        "name=\"#\" placeholder=\"#\"> <br><br> Read: <input class =\"Read\" name =\"Read\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
-        "name=\"#\" placeholder=\"#\"> <br><br> Update: <input class =\"Update\" name =\"Update\" type=\"number\" value=\"0\" min=\"0\" step=\"1\""+
-        "name=\"#\" placeholder=\"#\"> <br> <p2>Please upload .JSON file</p2> <input type=\"file\" id = \"fUploadUpdate" + idCounter + "\" accept=\"application/json\"> <br><br> Delete: <input class =\"Delete\" name =\"Delete\"type=\"number\" value=\"0\" min=\"0\" step=\"1\" "+
-        "name=\"#\" placeholder=\"#\"> <br><br>" +
-        "<button id=\"deleteButton" + idCounter + "\" type=\"button\""+
-        "onClick=\"removeForm(this.id)\">Delete Section" +
-        "</button><br> <br><hr></form>";
-
-    parentElement.innerHTML = formHTMLLayout;
+    parentElement.innerHTML = document.getElementById('blockOfStuff').innerHTML;
     maindDiv.appendChild(parentElement);
 
 }
@@ -222,8 +263,8 @@ function removeForm(elementId){
     }
 
 </script>
-<div id="results">
 
-</div>
+<div id="results"></div>
+
 </body>
 </html>
