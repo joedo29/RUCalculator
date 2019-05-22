@@ -178,8 +178,16 @@ async function CalculateMethod(){
     return true;
   };
 
+  function deleteExistingRows(){
+    var existingRows = document.getElementsByClassName("resultRow");
+    while(existingRows.length > 0){
+      existingRows[0].parentNode.removeChild(existingRows[0]);
+    }
+  }
+
   function addARow(d, c, r, u, de, t, s){
     var row = document.createElement("tr");
+    row.setAttribute("class", "resultRow")
     var col0 = document.createElement("td");
     col0.innerHTML = d;
     row.append(col0);
@@ -231,6 +239,7 @@ async function CalculateMethod(){
     }
 
     var forms = document.getElementsByTagName('form');
+    deleteExistingRows();
     for(count = 0; count < forms.length; count++){
       var fileInput2 = forms[count].elements["fUploadUpdate"];
       var fileInput = forms[count].elements["fUpload"];
@@ -241,7 +250,6 @@ async function CalculateMethod(){
             if(forms[count].elements["Update"].value == 0){
               var arr = await calculate2(sourceJSON, null);
               arr = JSON.parse(arr);
-
               //TODO: change information destination later
               alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
               document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count], false) + " RU";
