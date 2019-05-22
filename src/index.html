@@ -10,6 +10,12 @@
     margin-top:20px;
     margin-bottom:20px;
   }
+  table {
+    border-collapse: collapse;
+  }
+  table, th, td {
+    border: 1px solid black;
+  }
   </style>
 
   <title>RU Calculator</title>
@@ -87,34 +93,48 @@ var idCounter = 0;
 var parentElement = "";
 var childElement = "";
 
-function getCreate(basePrice, form){
+function getCreate(basePrice, form, print){
   var createField =  form.elements["Create"];
-  return parseInt(createField.value) * basePrice;
+  if(!print)
+    return parseInt(createField.value) * basePrice;
+  else
+    return parseInt(createField.value * basePrice) + " = " + createField.value + " * " + basePrice + " RU/s";
 }
 
-function getRead(basePrice, form){
+function getRead(basePrice, form, print){
   var readField =  form.elements["Read"];
-  return parseInt(readField.value) * basePrice;
+  if(!print)
+    return parseInt(readField.value) * basePrice;
+  else
+    return parseInt(readField.value * basePrice) + " = " + readField.value + " * " + basePrice + " RU/s";
 }
 
-function getUpdate(basePrice, form){
+function getUpdate(basePrice, form, print){
   var updateField =  form.elements["Update"];
-  return parseInt(updateField.value) * basePrice;
+  if(!print)
+    return parseInt(updateField.value) * basePrice;
+  else
+    return parseInt(updateField.value * basePrice) + " = " + updateField.value + " * " + basePrice + " RU/s";
 }
 
-function getDelete(basePrice, form){
+function getDelete(basePrice, form, print){
   var deleteField =  form.elements["Delete"];
-  return parseInt(deleteField.value) * basePrice;
+  if(!print)
+    return parseInt(deleteField.value) * basePrice;
+  else
+  return parseInt(deleteField.value * basePrice) + " = " + deleteField.value + " * " + basePrice + " RU/s";
 }
 
 function getTotal(arr, form){
   return getCreate(arr.create, form) + getRead(arr.read, form) + getUpdate(arr.update, form) + getDelete(arr.delete, form);
 }
 
-function getSize(size, form){
+function getSize(size, form, print){
   var numberField =  form.elements["documentNumber"];
-
-  return parseInt(numberField.value * size);
+  if(!print)
+    return parseInt(numberField.value * size);
+  else
+    return parseInt(numberField.value * size) + " = " + numberField.value + " * " + basePrice + " RU/s";
 }
 
 function calculate2(sourceJSON, updateJSON)
@@ -224,13 +244,13 @@ async function CalculateMethod(){
 
               //TODO: change information destination later
               alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
-              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
-              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
-              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
-              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
-              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
-              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
-              addARow(count + 1, arr.create, arr.read, arr.update, arr.delete, getTotal(arr, forms[count]), arr.size/1024);
+              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count], false) + " RU";
+              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count], false) + " RU";
+              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count], false) + " RU";
+              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count], false) + " RU";
+              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count], false) + " RU";
+              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count], false) + " KB";
+              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", arr.size/1024 + " KB");            
             }else{
               alert('There is no update file selected. ');
             }
@@ -241,13 +261,13 @@ async function CalculateMethod(){
               arr = JSON.parse(arr);
 
               alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete + " Size: " + arr.size);
-              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count]) + " RU";
-              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count]) + " RU";
-              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count]) + " RU";
-              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count]) + " RU";
-              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count]) + " RU";
-              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count]) + " KB";
-              addARow(count + 1, arr.create, arr.read, arr.update, arr.delete, getTotal(arr, forms[count]), arr.size/1024);
+              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count], false) + " RU";
+              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count], false) + " RU";
+              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count], false) + " RU";
+              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count], false) + " RU";
+              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count], false) + " RU";
+              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count], false) + " KB";
+              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", arr.size/1024 + " KB");
             }else{
               alert("No valid update file or too many selected. ");
             }
