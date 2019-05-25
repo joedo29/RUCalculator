@@ -43,27 +43,94 @@
 			<div id="delete"></div>
 			<div id="total"></div>
 			<div id="size"></div>
+			<div id="results" style="display: none">
+  <table>
+    <tbody id="resultsTable">
+      <tr id="row0">
+        <th>Document #</th>
+      </tr>
+      <tr id="row1">
+        <th>Create</th>
+      </tr>
+      <tr id="row2">
+        <th>Read</th>
+      </tr>
+      <tr id="row3">
+        <th>Update</th>
+      </tr>
+      <tr id="row4">
+        <th>Delete</th>
+      </tr>
+      <tr id="row5">
+        <th>Total</th>
+      </tr>
+      <tr id="row6">
+        <th>Size</th>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-			    <br> <input id = "calculate" type="submit" value="Calculate">
+			<br>
+					<!-- <button class="contact100-form-btn" id="calculate" type="submit" value="Calculate">
+						<span>
+							Calculate
+							<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+						</span>
+					</button> -->
+
+					<div class="container-contact100-form-btn">
+						<div class="wrap-contact100-form-btn">
+							<div class="contact100-form-bgbtn"></div>
+							<button class="contact100-form-btn" id="calculate" type="submit" value="Calculate">
+								<span>
+									Calculate
+									<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i>
+								</span>
+							</button>
+						</div>
+					</div>
 
 			<script src="addForm.js" type="text/javascript"></script>
 
 			<script id="blockOfStuff" type="text/html">
-			<form>
+			<form class="formStyle">
 			  <p2>Please upload .JSON file</p2>
 			  <input type="file" name = "fUpload" accept="application/json">
-			    <br> Number of Documents:<input class="documentNumber" type="number" name="documentNumber" value="0" min="0" step="1" placeholder="# of documents">
-			    <br> <br>
-			    Create: <input class ="Create" name ="Create" type="number" value="0" min="0" step="1" placeholder="#">
-			    <br><br>
-			    Read: <input class ="Read" name ="Read" type="number" value="0" min="0" step="1" placeholder="#">
-			    <br><br>
-			    Update: <input class ="Update" name ="Update" type="number" value="0" min="0" step="1" placeholder="#">
-			    <br> <p2>Please upload .JSON file</p2>
+				<br><br>
+					<div class="wrap-input100 validate-input" data-validate="Name is required">
+						<span class="label-input100">Number of Documents:</span>
+						<input class="input100" type="text" name="documentNumber" type"number" placeholder="#">
+						<span class="focus-input100"></span>
+					</div>
+					<br>
+					<div class="wrap-input100 validate-input" data-validate="Name is required">
+						<span class="label-input100">Create</span>
+						<input class="input100" type="text" name="Create" type"number" placeholder="#">
+						<span class="focus-input100"></span>
+					</div>
+			    <br>
+					<div class="wrap-input100 validate-input" data-validate="Name is required">
+						<span class="label-input100">Read</span>
+						<input class="input100" type="text" name="Read" type"number" placeholder="#">
+						<span class="focus-input100"></span>
+					</div>
+
+					<br>
+					<div class="wrap-input100 validate-input" data-validate="Name is required">
+						<span class="label-input100">Update</span>
+						<input class="input100" type="text" name="Update" type"number" placeholder="#">
+						<span class="focus-input100"></span>
+					</div>
+					<br> <p2>Please upload .JSON file</p2>
 			    <input type="file" name = "fUploadUpdate" accept="application/json">
 			    <br><br>
-			    Delete: <input class = "Delete" name ="Delete" type="number" value="0" min="0" step="1" placeholder="#">
-			    <br><br>
+					<div class="wrap-input100 validate-input" data-validate="Name is required">
+						<span class="label-input100">Delete</span>
+						<input class="input100" type="text" name="Delete" type"number" placeholder="#">
+						<span class="focus-input100"></span>
+					</div>
+			    <br>
 			    <button id="deleteButton" type="button" onClick="removeForm(this.id)">Delete Section</button>
 			    <br> <br><hr>
 			  </form>
