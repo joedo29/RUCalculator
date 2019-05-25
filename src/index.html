@@ -134,7 +134,7 @@ function getSize(size, form, print){
   if(!print)
     return parseInt(numberField.value * size);
   else
-    return parseInt(numberField.value * size) + " = " + numberField.value + " * " + basePrice + " RU/s";
+    return parseInt(numberField.value * size) + " = " + numberField.value + " * " + size + " KB";
 }
 
 function calculate2(sourceJSON, updateJSON)
@@ -211,7 +211,41 @@ async function CalculateMethod(){
     row.append(col6);
     resultsTable.append(row);
   }
-
+  function displayTotal(totalCreate, totalRead, totalUpdate, totalDelete, totalTotal, totalSizes){
+      /*
+      <th>Document #</th>
+        <th>Create</th>
+        <th>Read</th>
+        <th>Update</th>
+        <th>Delete</th>
+        <th>Total</th>
+        <th>Size</th>
+      */
+    var row = document.createElement("tr");
+    row.setAttribute("class", "resultRow")
+    var col0 = document.createElement("th");
+    col0.innerHTML = "Total";
+    row.append(col0);
+    var col1 = document.createElement("th");
+    col1.innerHTML = Math.round(totalCreate) + " RU/s";
+    row.append(col1);
+    var col2 = document.createElement("th");
+    col2.innerHTML = Math.round(totalRead) + " RU/s";
+    row.append(col2);
+    var col3 = document.createElement("th");
+    col3.innerHTML = Math.round(totalUpdate) + " RU/s";
+    row.append(col3);
+    var col4 = document.createElement("th");
+    col4.innerHTML = Math.round(totalDelete) + " RU/s";
+    row.append(col4);
+    var col5 = document.createElement("th");
+    col5.innerHTML = Math.round(totalTotal) + " RU/s";
+    row.append(col5);
+    var col6 = document.createElement("th");
+    col6.innerHTML = Math.round(totalSizes) + " KB";
+    row.append(col6);
+    resultsTable.append(row);
+  }
   if(checkFields()){
     //Kevin's method
     function checkJSON(fileInput) {
@@ -237,7 +271,8 @@ async function CalculateMethod(){
         json.readAsText(fileInput.files[0]);
       });
     }
-
+    var totalCreate = 0, totalRead = 0, totalUpdate = 0, totalDelete = 0, totalTotal = 0, totalSizes = 0;
+    var temp = {create:0, read:0, update:0, delete:0, total:0, sizes:0};
     var forms = document.getElementsByTagName('form');
     deleteExistingRows();
     for(count = 0; count < forms.length; count++){
@@ -251,14 +286,28 @@ async function CalculateMethod(){
               var arr = await calculate2(sourceJSON, null);
               arr = JSON.parse(arr);
               //TODO: change information destination later
+              temp.create = getCreate(arr.create, forms[count], false);
+              temp.read = getRead(arr.read, forms[count], false);
+              temp.update = getUpdate(arr.update, forms[count], false);
+              temp.delete = getDelete(arr.delete, forms[count], false);
+              temp.total = getTotal(arr, forms[count], false);
+              temp.sizes = getSize(arr.size/1024, forms[count], false);
+              totalCreate += temp.create;
+              totalRead += temp.read;
+              totalUpdate += temp.update;
+              totalDelete += temp.delete;
+              totalTotal += temp.total;
+              totalSizes += temp.sizes;
+              /*
               alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete);
-              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count], false) + " RU";
-              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count], false) + " RU";
-              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count], false) + " RU";
-              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count], false) + " RU";
-              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count], false) + " RU";
-              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count], false) + " KB";
-              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", arr.size/1024 + " KB");            
+              document.getElementById('create').innerHTML = "Create: " + temp.create + " RU";
+              document.getElementById('read').innerHTML = "Read: " + temp.read + " RU";
+              document.getElementById('update').innerHTML = "Update: " + temp.update + " RU";
+              document.getElementById('delete').innerHTML = "Delete: " + temp.delete + " RU";
+              document.getElementById('total').innerHTML = "Total RU: " + temp.total + " RU";
+              document.getElementById('size').innerHTML = "Total Size: " + temp.sizes + " KB";
+              */
+              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", getSize(arr.size/1024, forms[count], true));            
             }else{
               alert('There is no update file selected. ');
             }
@@ -267,15 +316,28 @@ async function CalculateMethod(){
             if(updateJSON != null){
               var arr = await calculate2(sourceJSON, updateJSON);
               arr = JSON.parse(arr);
-
+              temp.create = getCreate(arr.create, forms[count], false);
+              temp.read = getRead(arr.read, forms[count], false);
+              temp.update = getUpdate(arr.update, forms[count], false);
+              temp.delete = getDelete(arr.delete, forms[count], false);
+              temp.total = getTotal(arr, forms[count], false);
+              temp.sizes = getSize(arr.size/1024, forms[count], false);
+              totalCreate += temp.create;
+              totalRead += temp.read;
+              totalUpdate += temp.update;
+              totalDelete += temp.delete;
+              totalTotal += temp.total;
+              totalSizes += temp.sizes;
+              /*
               alert("Create: " + arr.create + " Read: " + arr.read + " Update: " + arr.update + " Delete: " + arr.delete + " Size: " + arr.size);
-              document.getElementById('create').innerHTML = "Create: " + getCreate(arr.create, forms[count], false) + " RU";
-              document.getElementById('read').innerHTML = "Read: " + getRead(arr.read, forms[count], false) + " RU";
-              document.getElementById('update').innerHTML = "Update: " + getUpdate(arr.update, forms[count], false) + " RU";
-              document.getElementById('delete').innerHTML = "Delete: " + getDelete(arr.delete, forms[count], false) + " RU";
-              document.getElementById('total').innerHTML = "Total RU: " + getTotal(arr, forms[count], false) + " RU";
-              document.getElementById('size').innerHTML = "Total Size: " + getSize(arr.size/1024, forms[count], false) + " KB";
-              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", arr.size/1024 + " KB");
+              document.getElementById('create').innerHTML = "Create: " + temp.create + " RU";
+              document.getElementById('read').innerHTML = "Read: " + temp.read + " RU";
+              document.getElementById('update').innerHTML = "Update: " + temp.update + " RU";
+              document.getElementById('delete').innerHTML = "Delete: " + temp.delete + " RU";
+              document.getElementById('total').innerHTML = "Total RU: " + temp.total + " RU";
+              document.getElementById('size').innerHTML = "Total Size: " + temp.sizes + " KB";
+              */
+              addARow(count + 1, getCreate(arr.create, forms[count], true), getRead(arr.read, forms[count], true), getUpdate(arr.update, forms[count], true), getDelete(arr.delete, forms[count], true), getTotal(arr, forms[count]) + " RU/s", getSize(arr.size/1024, forms[count], true));
             }else{
               alert("No valid update file or too many selected. ");
             }
@@ -289,11 +351,13 @@ async function CalculateMethod(){
         alert("No source file selected. ");
       }
     }
+    displayTotal(totalCreate, totalRead, totalUpdate, totalDelete,totalTotal, totalSizes);
     results.style.display = "block";
   }else{
     alert("Some fields are not valid. Ensure no value is negative. ");
   }
 }
+
 
 function addAForm(){
   parentElement = document.createElement("div");
