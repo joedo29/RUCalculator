@@ -99,30 +99,33 @@ async function CalculateMethod(){
   };
 
   function checkFields(){
-    var forms = document.getElementsByTagName('form');
-    for(count = 0; count < forms.length; count++){
-      var i = forms[count];
-      if(i.elements["documentNumber"].value == ''){
-        i.elements["documentNumber"].value = 0;
+      var forms = document.getElementsByTagName('form');
+      for(count = 0; count < forms.length; count++){
+        var i = forms[count];
+
+        if(i.elements["documentNumber"].value == ''){
+          i.elements["documentNumber"].value = 0;
+        }
+        if(i.elements["Create"].value == ''){
+          i.elements["Create"].value = 0;
+        }
+        if(i.elements["Read"].value == ''){
+          i.elements["Read"].value = 0;
+        }
+        if(i.elements["Update"].value == ''){
+          i.elements["Update"].value = 0;
+        }
+        if(i.elements["Delete"].value == ''){
+          i.elements["Delete"].value = 0;
+        }
       }
-      if(i.elements["Create"].value == ''){
-        i.elements["Create"].value = 0;
+      for(count = 0; count < forms.length; count++){
+        if(!validDocumentField(i.elements["documentNumber"].value) || !validField(i.elements["Create"].value) || !validField(i.elements["Delete"].value) || !validField(i.elements["Update"].value) || !validField(i.elements["Read"].value)){
+            return false;
+        }
       }
-      if(i.elements["Read"].value == ''){
-        i.elements["Read"].value = 0;
-      }
-      if(i.elements["Update"].value == ''){
-        i.elements["Update"].value = 0;
-      }
-      if(i.elements["Delete"].value == ''){
-        i.elements["Delete"].value = 0;
-      }
-      if(!validDocumentField(i.elements["documentNumber"].value) || !validField(i.elements["Create"].value) || !validField(i.elements["Delete"].value) || !validField(i.elements["Update"].value) || !validField(i.elements["Read"].value)){
-          return false;
-      }
-    }
-    return true;
-  };
+      return true;
+    };
 
   function deleteExistingRows(){
     var existingRows = document.getElementsByClassName("resultCol");
