@@ -73,7 +73,7 @@ function calculate2(sourceJSON, updateJSON)
   return new Promise((resolve, reject) => {
     var xmlhttp = new XMLHttpRequest();
     var theUrl = "http://localhost:8080/";
-    var theUrl2 = "https://vast-caverns-24352.herokuapp.com/";
+    var theUrl2 = "https://vast-caverns-24352.herokuapp.com/api";
     xmlhttp.responseType = '';
     xmlhttp.open("POST", theUrl2, true);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -137,6 +137,7 @@ async function CalculateMethod(){
   function addARow(d, c, r, u, de, t, s){
       var col0 = document.createElement("td");
       col0.innerHTML = d;
+      col0.setAttribute("id", "firstRow");
       var col1 = document.createElement("td");
       col1.innerHTML = c;
       var col2 = document.createElement("td");
@@ -177,6 +178,7 @@ async function CalculateMethod(){
         */
       var col0 = document.createElement("th");
       col0.innerHTML = "Total";
+      col0.setAttribute("id", "firstRow");
       var col1 = document.createElement("th");
       col1.innerHTML = Math.round(totalCreate) + " RU/s";
       var col2 = document.createElement("th");
